@@ -215,5 +215,79 @@ Anatomia de una API restful
       Singleton: 
         consiste en que cada vez que nos conectemos a nuestra base de datos
         no nos cree un nuevo cliente, si no que si el cliente ya existe use la conección 
-        existente
+        existente.
+  
+13. Implementando acciones de mongo
+  Las accciones practicamente son el CRUD en mongo
+    Read
+      .find(query,projection)
+      .findOne(query, projection)
     
+    Create
+      .inserOne(document, options)
+    
+    Update
+      .updateOne(filter,udtate,options)
+    
+    Delete
+      .deleOne(filter, options)
+
+  Estos metodos retornan la conección a mongo, con una instancia a la 
+  base de datos y esa instancia tiene los metodos de mongo
+
+    getAll(collection, query) {
+      return this.connect().then(db =>{
+        return db.collection(collection).find(query).toArray()
+      })
+    }
+  
+  tenemos que retornar entonces la coleccón con la busqueda hecha
+  convertida a un array
+
+  Ahora podemos cambiar nuestros mocks por la información de nuestra DB_HOST
+
+14. Coneción de nuestros servicios con Mongo
+  Quitamos los mocks y agregamos un constructor a la clase services
+    constructor() {
+      this.collection = 'movies';
+      this.mongoDB = new Mongolib()
+    }
+
+    async getMovies({ tags }) {
+      const query = tags && { tags: {$in: tags} }
+      const movies = await this.mongoDB.getAll(this.collection, query);
+      return movies || [];
+    }
+
+  En este punto ya tenemos conección con nuestra base de datos, pero 
+  necesitamos usar un bodyparcer para poder enviar datos nuevos a nuestra
+  colección.
+
+15. Agrando middleware para interpretar JSON
+  Para hacer esto vamos a nuestro index y agragamos esto
+    app.use(express.json());
+  Que lo que va a permiter es saber interpretar datos JSON
+
+Hasta ahora podemos: 
+  Usar Mongo atlas para conectarse a una instancia de MongoDB
+  Crear una interfaz para nuestras acciones
+  Implementar acciones de MongoDB
+
+16. Middlewares
+  Es una pieza de softwate que esta en medio de otra, se le suele
+  describir como pegamento de software
+  Para utilizarlos en node podemos:
+    function(req,res,next) {
+      next()
+    }
+  Para pasar al siguiente middleware vamos a ejecutar next.
+
+  Así vamos a crear toda una capa de manejo de errores usando middleares
+
+  Los middleware de error tienen un paramettro adicional
+    function errorHandle(err, res, res, next) {
+      res.status(err.status || 500)
+      res.jso({error: err})
+    }
+17. Creación de capa de manejo de errores
+  Creamos en utils una carpeta llamada middleware
