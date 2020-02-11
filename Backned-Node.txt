@@ -139,3 +139,15 @@ Anatomia de una API restful
     Read - leer
     Update - actualizar
     Delete - eliminar
+10. Implementando una capa de servicios:
+  La capa de servicio lo que nos a va a permitir es manejar
+  la logica de nuestro negocio y saber el comportamiento de 
+  los datos, esta se va a comunicar con la capa de rutas
+
+  para eso tenemos que crear una nueva instancia de la clase
+  services  
+    const moviesService = new MoviesService();
+  luego podemos usar los metodos creados
+    const movies = await moviesService.getMovies({ tags });
+
+
