@@ -118,3 +118,24 @@ RESPONSE OBJECT
         res.send("<p>some html</p>");
         res.status(404).send("Sorry, we cannot find that!");
         res.status(500).send({ error: "something blew up" });
+
+Anatomia de una API restful
+  Rest( Representational State Transfer) es un estilo de 
+  arquitectura para construir web services, no es un estándar pero 
+  si una especificación muy usada
+
+  Las peticiones HTTP van acompaladas de un "verbo" que define
+  el tipo de petición:
+    GET. Lectura de datos.
+    PUT. Reemplazar datos.
+    PATCH. Actualizar datos en un recurso específico.
+    POST. Creación de datos.
+    DELETE. Eliminación de datos.
+
+9. Implementando un CRUD en Express.js
+  Las siglas CRUD vienen de las palabras en inglés:
+
+    Create - crear
+    Read - leer
+    Update - actualizar
+    Delete - eliminar
