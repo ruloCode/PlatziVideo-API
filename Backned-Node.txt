@@ -1,0 +1,120 @@
+Profesor
+
+Guillermo rodas
+
+Segundo round
+
+Express fue inspirado en sinatra que esta escrito en Ruby
+  es muy minimalista
+  Middlewares
+
+Vamos a construir el backend de PlatVideos
+
+1. Lo primero que hacemos en es agregar nuestros script en el package.json
+
+  "scripts": {
+    "dev": "DEBUG=app* nodemon index",
+    "start": "NODE_ENV=production node index"
+  },
+
+  DEBUG=app*: La variable de entorno va a imprimir todo lo que tenga
+  de la aplicación, usaremos nodemon
+  NODE_ENV=production: Vamos a habilitar el modo production ejecutando node normalmente
+
+2. Configuramos eslint para entorno node
+  {
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "extends": ["eslint:recommended", "prettier"],
+    "env": {
+      "es6": true,
+      "node": true,
+      "mocha": true
+    },
+    "rules": {
+      "no-console": "warn"
+    }
+  }
+3. Configuramos Prettier, para formatear nuestro codigo
+  {
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true
+  }
+
+4. Intalamos nuestros dependencias core
+  $ npm i express dotenv
+
+5. Instalamos las dependencias dev
+  $ npm i -D nodemon eslint eslint-config-prettier eslint-plugin-prettier prettier
+
+6. Cada vez que se haga con commit vamos a hacer un fix del código
+  $ npx mrm lint-staged
+7. Creamos nuestro archivo de configuración 
+8. Creamos nuestro servidor de express
+
+REUEST OBJECT
+  El objeto req (Request) en 
+  Express representa el llamado
+  HTTP y tiene diferentes propiedades
+  del llamado, como la cadena de texto
+  query (Query params), los parámetros
+  de la URL (URL params), el cuerpo (Body),
+  los encabezados (HTTP headers), etc.
+
+  req.body:
+    Contiene los pares de llave-valor de los datos
+    enviados en el cuerpo (body) del llamado (request).
+    Por defecto es undefined pero es establecido cuando
+    se usa algún “body-parser” middleware como body-parser y multer.
+
+  req.params:
+
+    Esta propiedad contiene un objeto con las propiedades equivalentes
+    a los parámetros nombrados en la ruta. Por ejemplo, si tenemos una ruta
+    de la forma /user/:name , entonces la propiedad name está disponible como
+    req.params.name, si llamamos a la ruta /user/rulos el valor de 
+    req.params.name será rulos
+      // GET /user/rulos
+        req.params.name;
+      // => "rulos"
+
+  req.query:
+
+    Esta propiedad contiene un objeto con las propiedades equivalentes a las cadenas de texto
+    query de la ruta. Si no hay ninguna cadena de texto query tendrá como valor
+    por defecto un objeto vacío {}
+
+RESPONSE OBJECT
+  Representa la respuesta HTTP que envía una aplicación en Express
+  Para acceder al res basta con acceder al segundo parámetro de nuestros router heandlers
+
+    app.get("/user/:id", function(req, res) {
+      res.send("user " + req.params.id);
+    });
+  
+  Métodos mas comunes
+    res.end():
+      Finaliza el proceso de respuesto. Este método viene realmente del core de node
+      Se usa para finalizar el request rápidamente sin ningún dato. 
+        res.end();
+        res.status(404).end();
+    
+    res.json():
+
+      Convierte el parámetro enviado a una cadena de texto JSON usando JSON.stringify()
+      El parámetro puede ser cualquier tipo de JSON, incluido un objeto, un arreglo, una cadena de texto, un boolean, número, null y también puede ser usado para convertir otros valores a JSON.
+
+        res.json(null);
+        res.json({ user: "tobi" });
+        res.status(500).json({ error: "message" });
+
+    res.send():
+      Envía una respuesta HTTP. El parámetro body puede un objeto, una cadena, un objeto
+      o un arreglo
+        res.send(Buffer.from("whoop"));
+        res.send({ some: "json" });
+        res.send("<p>some html</p>");
+        res.status(404).send("Sorry, we cannot find that!");
+        res.status(500).send({ error: "something blew up" });
