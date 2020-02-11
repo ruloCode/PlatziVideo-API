@@ -150,4 +150,70 @@ Anatomia de una API restful
   luego podemos usar los metodos creados
     const movies = await moviesService.getMovies({ tags });
 
+¿Cómo conectarse a servicio externos en express js
+  en esta ocación vamos a usar mongo atlas
 
+  La URI de MongoDB tiene esta estructura
+  mongodb+srv://DB_USER:DB_PASSWORD@DB_HOST/DB_NAME
+
+  Todo esto lo vamosa  representar en variables de entorno
+  para que luego sea muy facíl cambiar de ambiente
+
+  El acceso de red es la primera capa de seguridad que tenemos, y una muy importante
+  lo que se debe hacer cuando estamos en producción es determinar
+  cual es la id de la maquina que esta en producción, para que 
+  solo esa ip tenga acceso
+
+  Pero como estamos hablando de desarrollo, nosotros vamos
+  ha permitir que cualquier ip se conecte a nuestra base de datos
+  de todas formar contaremos con un usuario y contraseña 
+  que debera ser un parametro de conección más adelante
+
+  Clusters
+    Se componend de tres o más instancias de mongodb,
+    esto hace que tengamos alta disponibilidad a diferencia de 
+    otro servicios
+
+11. Conexión a MongoAtlas una instancia de MongoDB
+  Lo primero es instalar:
+    $ npm i mongodb
+  Luego creamos dos archivos super importantetes:
+    .env.example .env
+  teniendo claro que el .example será el que irá a parar al repositorio
+  y será la instrucción para cualquier otro desarrollador
+  En archivo .env no debe eser expuesto
+
+    //CONFIG
+    PORT=3000
+    CORS=*
+
+    //MONGO
+    DB_USER=
+    DR_PASSWORD=
+    DB_HOST=
+    DB_NAME=
+12. Alimentar archivo de configuración con variables de entorno
+  TRUCO: Agregar cursor al final de la linea
+    alt + shift + i
+
+    Creacmos una carpeta llamada lib que va a contener la Conexión
+    con mongo 
+
+    Metenemos que encodificar nuestras varibles para evitar errores de
+    interpretación
+      const PASSWORD = encodeURIComponent(config.dbPassword);
+
+    Ahora creamos nuestro URI
+      const MONGO_URI = `mongodb+srv://${USER}:${PASSWORD}@${config.dsHost}:${config.port}/${DB_NAME}?retryWrites=true&w=majority`
+
+    Seguido a esto vamos a crear una clase con la conección
+      class MongoLib {
+           
+      }
+    
+    En la conección vamos a utilizar un patron que se llama singleton
+      Singleton: 
+        consiste en que cada vez que nos conectemos a nuestra base de datos
+        no nos cree un nuevo cliente, si no que si el cliente ya existe use la conección 
+        existente
+    
