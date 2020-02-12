@@ -291,3 +291,11 @@ Hasta ahora podemos:
     }
 17. Creación de capa de manejo de errores
   Creamos en utils una carpeta llamada middleware
+  dependiento del entorno en el que estemos tenemos que 
+  mostar o no el detalle del error
+
+  Por defecto los errores se muestran en un formato HTML,
+  pero como estamos implementado una API lo más
+  recomendable es que sea en formato JSON
+
+  Los middleware siempre deben ir despues de las rutas
