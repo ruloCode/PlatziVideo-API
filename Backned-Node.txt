@@ -299,3 +299,50 @@ Hasta ahora podemos:
   recomendable es que sea en formato JSON
 
   Los middleware siempre deben ir despues de las rutas
+
+  Para errores que se retornan desde funciones asíncronas 
+  invocadas desde un manejador de ruta o un middleware, 
+  es necesario pasar el error como argumento a la función next(), 
+  de esta manera Express capturará el error y lo procesará.
+
+    app.get("/", function(req, res, next) {
+      setTimeout(function() {
+        try {
+          throw new Error("BROKEN");
+        } catch (err) {
+          next(err);
+        }
+      }, 100);
+    });
+  Cuando se usan funciones que retornan promesas,
+  puedes simplemente proveer la funcionalidad next al final del manejador
+  catch de la promesa y Express automáticamente capturará el error. Por ejemplo:
+    app.get("/", function(req, res, next) {
+      Promise.resolve()
+        .then(function() {
+          throw new Error("BROKEN");
+        })
+        .catch(next); // Errores serán pasados a Express.
+    });
+
+18. Creacion de capa de validación de datos usando un middleware
+  tenemos que tener muy claro que datos reciben nuestro endpoints
+  Para eso podemos expecificar schemas de datos que tengan que cumplirse
+  para que todo funcione bien
+
+  Para eso vamos a crear una funcionalidad llamada
+  validationHandler, el cual va a recibir un schema
+  y donde se va a usar ese schema
+
+  creamos otro middleware llamdo validationHandler
+    function validate() {
+      return false;
+    }
+
+    function validationHandler(schema, check ="body") {
+      return (req, res, next) => {
+        const error = validate(req[check], schema);
+
+        error ? next(new Error(error)) : next()
+      }
+    }
