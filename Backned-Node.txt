@@ -346,3 +346,34 @@ Hasta ahora podemos:
         error ? next(new Error(error)) : next()
       }
     }
+
+QUÉ ES JOI Y BOOM ?
+  joi: Object Schema validation, sirve para validad que los datos
+  que recibimos vengan en el formato adecuado
+
+  boomÑ HTTP-friendly error objects, nos ayuda a imprimir errores
+  comunes en peticiones HTTP de forma sencilla
+
+19. Implementando Boom para manejo de errores
+  Instalamos boom
+    $ npm i @hapi/boom
+  hacemos un split operator a el error, porque ahora va a contener más cositas
+    return {...error, stack}
+  Cramos un nuevo middleware
+    function wrapErrors(err, req, res, next) {
+
+    }
+  es posible que algún error no llegué en formato boom, así 
+  que a partir de este middleware vamos a encapsular todos los errores 
+  en formato boom
+    function wrapErrors(err, req, res, next) {
+      if(!err.isBoom) {
+        next(boom.badImplementation(err)) // manera de marcar errores de boom
+      }
+      next(err)
+    }
+
+  El errr de not found es improtante tambien, para eso vamos a crear
+  un middleware que no necesita next pues será el último middleware 
+  ejecutado en el server
+    
