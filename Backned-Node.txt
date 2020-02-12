@@ -377,3 +377,54 @@ QUÉ ES JOI Y BOOM ?
   un middleware que no necesita next pues será el último middleware 
   ejecutado en el server
     
+
+20. Implementando Joi para validación de datos
+  $ npm i @hapi/joi
+  
+  Vamor a implementar de manera muy sencilla nuestra validación 
+  con joi, que sólo retornará un error si la validación falla
+    function validate(data, schema) {
+      const { error } = joi.validate(data, schema)
+      return error;
+    }
+  
+  La parte "complicada" es crear el schema de nuestros datos
+
+  creamos utils/schemas
+    creamos un schema de creación y otro de actulización dado que
+    cuando actualizamos no todos los campos son requeridos
+
+    para el id de nuestra pelicula necesitamso general una expresion regular
+    para validar que es un id de mongo validation
+
+      const movieIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}$/);
+
+      const movieIdSchema = {
+
+      }
+      const createMovieSchema = {
+
+      }
+
+      const updateMovieSchema = {
+        
+      }
+
+    Una vez tenemos definidos nuestros schemas, vamos a importarlos 
+    dentro de las rutas
+
+    tambien debemos requerir nuestro validationHandler
+    por defecto nuestro handler va a sacar los datos del body, pero 
+    eso tiene que cambiar para validar un id que nos viene desde params
+
+     validationHandler({ movieId: movieIdSchema}, 'params')
+
+     este middleware irá entonces entra la ruta y la definición de la ruta
+      router.post('/',validationHandler(createMovieSchema), async function(req, res, next)
+  
+    Resumen del modulo:
+      Middlewares
+      Manejo de errores
+      validación de datos
+      boom y  joi
+      
