@@ -427,4 +427,27 @@ QUÉ ES JOI Y BOOM ?
       Manejo de errores
       validación de datos
       boom y  joi
-      
+
+21. Creación de test
+  La primera suit de test la vamos a implementar en nuestras rutas
+  su unica responsabilidad de test, es probar que obtiene y regresa
+  los datos correspondientes
+
+  Intalamos las dependencias para los tests
+    $ npm i -D mocha supertest sinon proxyquire
+      mocha: nos ayuda a correr nuestros test
+      supertest: crea un servidor de pruebas
+      sinon: nos ayuda a hacer mocks apra tets
+      proxyquire: inyectar los mocks cuando requiramos los paquetes
+  
+  Vamo a modificar nuestros mocks, para agregarles una utilidad
+  de filtrado.
+
+  Cómo nuestro objetivo es sólo testear las rutas, no vamos a llegar
+  a nuestros servicios, por eso tenemos que usar nuestros mocks como services
+
+  Lo siguiente es crear un servidor de pruebas dentro de utils
+
+  En nuestros test lo primero es obtener
+    const assert = require('assert');
+  Para hacer la verificación de nuestros test
