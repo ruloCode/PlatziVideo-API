@@ -4,6 +4,8 @@ const app = express()
 
 const { config } = require('./config/index');
 const moviesApi = require('./routes/movies');
+const usersApi = require('./routes/users');
+const userMoviesApi = require('./routes/userMovies');
 
 const { logErrors, errorHandler, wrapErrors } = require('./utils/middleware/errorHandlers')
 const notFoundHandler = require('./utils/middleware/notFoundHandler')
@@ -13,7 +15,8 @@ app.use(express.json());
 
 // routes
 moviesApi(app)
-
+usersApi(app)
+userMoviesApi(app)
 //not found 404
 app.use(notFoundHandler)
 

@@ -451,3 +451,195 @@ QUÉ ES JOI Y BOOM ?
   En nuestros test lo primero es obtener
     const assert = require('assert');
   Para hacer la verificación de nuestros test
+
+
+Passport
+  Vamos a implementar autorización y autenticación con Passport
+  para eso lo primo es crear el schema de usuarios
+    const createUserSchema = {
+      name: joi.string().max(100).required(),
+      email: joi.string().email().required(),
+      password: joi().string().require(),
+      isAdmin: joi.boolean()
+    }
+
+  ya teniendo nuestro schema podemos crear nuestro service
+  en donde vamso a requerir nuestros metodos de mongo, 
+  tambien necesitamos instalar bcrypt para poteger nuestras contraseñas
+    $ npm i bcrypt
+  Creamos nuestra clase y agregamos en el cosntructor tando la 
+  instancian de la libreria como el nombre de la colección con la que queremos jugar
+    constructor() {
+      this.collection = 'users';
+      this.mongoDB = new MongoLib();
+    }
+  La manera de indentificar a un usuario en base de datos será atravez de su email
+
+  Nuestro servicio para crear usuario recibirá los datos de un nuevo usuario e incriptará 
+  su contraseña
+    async createUser({ user}) {
+      const { name, email, password} = user;
+      const hashedPassword = await bcrypt.hash(password, 10 );
+    }
+
+
+  Agregando la colección de películas de usuario
+    vamos a agregar el schema, la ruta y el servicio de las pelicuals del usuario
+
+    Esto nos permitirá que cuando un usuario autentique y agrege una pelicula a su lista de favoritos
+    lo puede ver en la aplicación
+
+    Agregamos el schema del  userMovies, este va a contener los schemas de user y movieIdSchema
+    los cuales serán parte del createUserSchema
+      userId
+      MovieId
+
+    En nuestro servicio vamos a usar nuestros metodos de mongpo
+      async getUserMovies({ userId }){
+        const query = userId && { userId};
+passport-jwt
+        return userMovies || []
+      }
+
+    Una vez creado el schema, las rutas y los servicios
+    nos disponemos a crear los methos de POST y DELETE
+    
+
+Configuración de passport
+  $ npm i passport jsonwebtoken passport-http passport-jwt
+    jsonwebtoken: para poder hacer uso de nuestro JWT
+    passport-http: implementar la estrategia basic de passport
+    passport-jwt: implementar la estrategia JWT
+  $ npm i -D chalk
+    Permite pintar colores en la terminal
+  
+  Vamos a agregar en nuestro .env y .env.example las siguientes variables de entorno
+
+  DEFAULT_ADMIN_PASSWORD= //para definir la clave des administrador
+  DEFAULT_USER_PASSWORD=
+
+  Lo siguiente es definir el secret que usaremos para firmar nuestro JWT
+  necesitamos crear un key de 256 bits
+    WEP 256-bit Key
+    https://keygen.io/
+
+  Otra cosa que vamos a defirnir es cuales van a ser nuestras 
+  API keys
+  Las API keys son lo que nos permiten definir los permisos correspondientes
+  cuando haya un login con alguno de nuestros clientes
+  a travez del render server o nuestro admin client
+
+  estos api key van a ser generados aleatoriamente mediante nuestros scripts
+
+  Creación de script: un script lo podemos correr para generar registro dentro de 
+  nuestra base de datos de manera rápida
+    seedUsers.js : crear usuarios
+    seedMovies.js : crear movies
+    seedApiKeys.js : crear permisos de API
+  
+Estrategias de autenticación:
+  Sirven para definir comno nos vamos a autenticar en las diferentes rutas
+  y así definir de donde saldrá el usuario que vamos a usar de ahí en adelante
+
+  BASIC STRATEGY
+    Lo primero es crear un carpeta auth/strategies
+
+    Aquí passport tiene que usar alguna estrategia conocida y para eso usaremos
+      const { BasicStrategy } = require('passport-htttp');
+      que nos permitirá hacer una validación sencilla
+
+      Tambien utilizaremos nuestro userService, que es lo que nos conecta con la base 
+      de datos
+        const UserService = require('../../services/users');
+      
+      usamos passport y la estrategia
+        passport.use(
+          new BasicStrategy( async (email, password, callback) => {
+
+          })
+        )
+      los dos primeros parametros llegarán del req, el tercero será quien 
+      envia la respuesta de la autenticación
+
+      Hacemos la petición a DB y comprovamos si existe un usuario
+        const user ¿ await userService.getUser({ email });
+
+        if(!user){
+          return callback(boom.unauthorized(), false)
+        }
+      tambien varificamos si la contraseña en la misma de la base de datos
+      usando bcrypt
+        if(!(await bcrypt.compare(password, user.password))) {
+          return callback(boom.unauthorized(), false);
+        }
+      Luego eliminamos el password del user para que ya 
+      no sea visible
+        delete user.password
+
+      si pasamos nuestras dos validaciones, llamamos al callback
+      con un error nulo y el user que nos devolvió la DB
+        return callback(null, user)
+
+      Ya con esto tenemos implementada nuestra autenticación y así
+      podemos usarla como middleware en nuestras rutas
+      para atravez del email y el password de un usuario 
+      lograr autenticarlo
+
+  JWT STRATEGY
+    En esta recibimos un JWT y a partir del toeken decodificado buscaremos el usuario
+
+    Lo primero es asegurarnos que en nuestro .env este definido el 
+    AUTH_JWT_SECRET= con un codigo de base 256 bit
+
+    lo agregamos a nuestro archivo config
+      authJwtSecret: process.env.AUTH_JWT_SECRET,
+    
+    Creamos un nuevo archivo en nuestras Estrategias
+      auth/strategies/jwt.js
+    
+    reqerimos passport-jwt para implementar esa estrategia
+      const { Strategy, ExtractJwt } = require('passport-jwt');
+    
+    Definimos nuestra nueva estrategia
+      passport.use(
+        new Strategy({
+          secretOrKey: config.authJwtSecret,
+          jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+        })
+      )
+      secretOrKey: es neustro secret que esta en base 256 bit y esta en .env
+      jwtFromRequest: de donde va a salir nuestro JWT, en este caso saldrá del headers
+      de la petición.
+
+      Así que cuando queramos autenticar, tendremos que enviar el JWT en el header
+      como un Bearer Token.
+
+      En nuestra función callback, osea el segundo parametro de passport.use(,este)
+      vamos a recibir nuestro token ya decodificado y un callback que dará la respues final
+      si funciono ese token o nel 
+        async (tokenPayload, callback) => {
+         
+       }
+      
+      Hacemos la petición desde nuestra base de datos usando el tokenPayload
+      const user = await usersService.getUsers({ email: tokenPayload.email })
+
+      si esto si trae el usuario pues ya estamso autorizados sin ncesidad de verificar el 
+      password pues ya usamos nuestro secret 
+        if(!user) {
+          return callback(boom.unauthorized(), false);
+        }
+      Eliminamos la contraseña por seguridad
+        delete user.password
+      y en el callback devolvemos el user con sus  scopes
+        callback(null, {...user, scopes: tokenPayload.scopes});
+    
+Implementación de nuestro Sign-in
+  Lo primero para implementar nuestra ruta de sign in
+  tenemos que crear un servicio llamado apiKeys.js
+  
+
+
+
+     
+  
