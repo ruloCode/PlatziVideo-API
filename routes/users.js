@@ -16,7 +16,7 @@ function usersApi(app) {
     async function(req, res, next) {
       const { email } = req.query
       try {
-        const users = await usersService.getUsers({
+        const users = await usersService.getUser({
           email
         });
 

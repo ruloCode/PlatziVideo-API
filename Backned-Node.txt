@@ -637,7 +637,41 @@ Estrategias de autenticación:
 Implementación de nuestro Sign-in
   Lo primero para implementar nuestra ruta de sign in
   tenemos que crear un servicio llamado apiKeys.js
-  
+  lo que nos va a pertimir es que atraves de un API-Key-token podamos obtener los scopes
+  y es requerido a la hora de hacer sign in, para poder firmar nuestros
+  JWT con lso scopes correspondientes de acuerdo al APi-token ue nosotros enviemos.
+
+  nuestro servicio se va a conectar a la colección que tiene todos nuestros permisos
+  obteniendo así los permisos correspondientes alñ token que le enviemos.
+
+  Recordemos que estas dos clases de permisos ya los creamos con seedApiKeys.js
+
+  Ahora que ya tenemos neustro servicio para obetener neustro permisos vamos a crear 
+  nuestra ruta para hacer autenticación
+    Nuestra estrategia basica va a user el servicio del apiKeys
+    para eso creamos una nueva ruta con un post
+      function authAPi(app) {
+        const router = express.Router();
+        app.use('/api/auth', router);
+
+        const apiKeysService = new ApiKeysService()
+
+        router.post('/sign-in', async(req, res, next)=>{
+          const { apiKeyToken } = req.body;
+        })
+      }
+      el apiKeyToken que viene el cuerpo de la petición será el token 
+      que le pasaremos al sign in para determinar que clase de permisos tiene
+      que firmar en el JWT que vamos a devolver.
+        if(!apiKeyToken) {
+          next(boom.unauthorized(' apiKeytoken is required'));
+        }
+        si no nos llega el token el bodu pues error primero
+
+      cuando ya tenemos el apiKeyToken ahora si usamos passport para usar 
+      la estrategia de autenticación
+
+
 
 
 
