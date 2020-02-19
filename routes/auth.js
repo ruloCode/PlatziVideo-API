@@ -23,8 +23,11 @@ function authApi(app) {
   const apiKeysService = new ApiKeysService();
   const usersService = new UsersService();
 
+  const THIRTY_DAYS_IN_SEC = 2592000;
+  const TWO_HOURS_IN_SEC = 7200;
+
   router.post('/sign-in', async function(req, res, next) {
-    const { apiKeyToken } = req.body;
+    const { apiKeyToken, rememberMe } = req.body;
 
     if (!apiKeyToken) {
       next(boom.unauthorized('apiKeyToken is required'));
@@ -57,7 +60,7 @@ function authApi(app) {
           };
 
           const token = jwt.sign(payload, config.authJwtSecret, {
-            expiresIn: '15m'
+            expiresIn: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
           });
 
           return res.status(200).json({ token, user: { id, name, email } });
