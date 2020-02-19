@@ -26,6 +26,12 @@ class UsersService {
     return createdUserId;
   }
 
+  async verifyUserExists({ email }) {
+    const query = email && { email: email }
+    const [user] = await this.mongoDB.getAll(this.collection, query)
+    return user;
+  }
+
   async updateUser({userId, user} = {}) {
     const { name, email, password} = user;
     const hashedPassword = await bcrypt.hash(password, 10 );
