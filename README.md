@@ -20,3 +20,19 @@ npm run test
 ```
 ### Licencia
 Passport se lanza bajo la licencia [MIT](https://opensource.org/licenses/MIT).
+
+#### Editor.md directory
+
+    editor.md/
+            lib/
+				css/
+            css/
+            scss/
+            tests/
+            fonts/
+            images/
+            plugins/
+            examples/
+            languages/     
+            editormd.js
+            ...
