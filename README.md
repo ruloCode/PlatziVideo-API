@@ -1,2 +1,3 @@
-# PlatziVideo-API
-creando el server de platzi video
+# Passport
+
+Aquí estare practicando los conceptos básicos de passport la manera de autenticar y autorizar usuarios.
